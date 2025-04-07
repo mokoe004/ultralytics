@@ -473,7 +473,7 @@ class BaseTrainer:
             # Do final val with best.pt
             seconds = time.time() - self.train_time_start
             LOGGER.info(f"\n{epoch - self.start_epoch + 1} epochs completed in {seconds / 3600:.3f} hours.")
-            self.final_eval()
+            #self.final_eval()
             if self.args.plots:
                 self.plot_metrics()
             self.run_callbacks("on_train_end")
@@ -529,6 +529,33 @@ class BaseTrainer:
                 m.eval()
 
     def save_model(self):
+        """Safe checkpointing for Brevitas quantized models (only saves state_dicts)."""
+        import io
+        buffer = io.BytesIO()
+        torch.save(
+            {
+                "epoch": self.epoch,
+                "best_fitness": self.best_fitness,
+                "model_state_dict": self.ema.ema.state_dict(),  # 👈 nur state_dict
+                "optimizer": self.optimizer.state_dict(),
+                "train_args": vars(self.args),
+                "train_metrics": {**self.metrics, **{"fitness": self.fitness}},
+                "train_results": self.read_results_csv(),
+                "date": datetime.now().isoformat(),
+                "version": __version__,
+                "license": "AGPL-3.0",
+                "docs": "https://docs.ultralytics.com",
+            },
+            buffer,
+        )
+        serialized_ckpt = buffer.getvalue()
+        self.last.write_bytes(serialized_ckpt)
+        if self.best_fitness == self.fitness:
+            self.best.write_bytes(serialized_ckpt)
+        if (self.save_period > 0) and (self.epoch % self.save_period == 0):
+            (self.wdir / f"epoch{self.epoch}.pt").write_bytes(serialized_ckpt)
+
+    def old_save_model(self):
         """Save model training checkpoints with additional metadata."""
         import io
 

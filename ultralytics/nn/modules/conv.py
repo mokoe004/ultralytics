@@ -7,8 +7,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+
+from brevitas.nn import QuantConv2d, QuantReLU, QuantIdentity
+
 __all__ = (
     "Conv",
+    "QuantConv",
     "Conv2",
     "LightConv",
     "DWConv",
@@ -89,6 +93,33 @@ class Conv(nn.Module):
             (torch.Tensor): Output tensor.
         """
         return self.act(self.conv(x))
+
+class QuantConv(nn.Module):
+    def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True,
+                 weight_bit_width=8, act_bit_width=8):
+        super().__init__()
+        self.quant_conv = QuantConv2d(
+            in_channels=c1,
+            out_channels=c2,
+            kernel_size=k,
+            stride=s,
+            padding=autopad(k, p, d),
+            groups=g,
+            dilation=d,
+            bias=False,
+            weight_bit_width=weight_bit_width
+        )
+        self.bn = nn.BatchNorm2d(c2)
+        # Safe activation selection
+        if act is True:
+            self.act = QuantReLU(bit_width=act_bit_width, inplace=True)
+        elif act is False:
+            self.act = QuantIdentity(bit_width=act_bit_width)
+        else:
+            self.act = act  # assume it's a safe module
+
+    def forward(self, x):
+        return self.act(self.bn(self.quant_conv(x)))
 
 
 class Conv2(Conv):

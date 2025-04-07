@@ -41,6 +41,7 @@ from ultralytics.nn.modules import (
     Classify,
     Concat,
     Conv,
+    QuantConv,
     Conv2,
     ConvTranspose,
     Detect,
@@ -152,6 +153,7 @@ class BaseModel(torch.nn.Module):
         """
         y, dt, embeddings = [], [], []  # outputs
         for m in self.model:
+            #print(f"Layer {m} output shape: {x.shape}")
             if m.f != -1:  # if not from previous layer
                 x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]  # from earlier layers
             if profile:
@@ -1364,6 +1366,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
         {
             Classify,
             Conv,
+            QuantConv,
             ConvTranspose,
             GhostConv,
             Bottleneck,

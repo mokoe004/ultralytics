@@ -65,6 +65,7 @@ from .conv import (
     ChannelAttention,
     Concat,
     Conv,
+    QuantConv,
     Conv2,
     ConvTranspose,
     DWConv,
@@ -74,7 +75,7 @@ from .conv import (
     Index,
     LightConv,
     RepConv,
-    SpatialAttention,
+    SpatialAttention, QuantConv,
 )
 from .head import (
     OBB,
@@ -104,6 +105,7 @@ from .transformer import (
 
 __all__ = (
     "Conv",
+    "QuantConv",
     "Conv2",
     "LightConv",
     "RepConv",
