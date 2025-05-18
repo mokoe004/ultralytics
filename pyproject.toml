@@ -92,6 +92,11 @@ dev = [
     "mkdocs-ultralytics-plugin>=0.1.17", # for meta descriptions and images, dates and authors
     "mkdocs-macros-plugin>=1.0.5"  # duplicating content (i.e. export tables) in multiple places
 ]
+quant = [
+    "onnx>=1.12.0", # ONNX export
+    "onnxoptimizer>=0.4.0", # ONNX export
+    "brevitas>=0.9.0", # quantization
+]
 export = [
     "onnx>=1.12.0", # ONNX export
     "coremltools>=8.0; platform_system != 'Windows' and python_version <= '3.12'", # CoreML supported on macOS and Linux

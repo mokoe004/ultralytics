@@ -18,6 +18,9 @@ Examples:
 """
 
 from .block import (
+    QuantC2f,
+    QuantBottleneck,
+    QuantSPPF,
     C1,
     C2,
     C2PSA,
@@ -104,6 +107,9 @@ from .transformer import (
 )
 
 __all__ = (
+    "QuantC2f",
+    "QuantBottleneck",
+    "QuantSPPF",
     "Conv",
     "QuantConv",
     "Conv2",

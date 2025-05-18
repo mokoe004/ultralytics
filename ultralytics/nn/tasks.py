@@ -12,6 +12,10 @@ import torch.nn as nn
 
 from ultralytics.nn.autobackend import check_class_names
 from ultralytics.nn.modules import (
+    QuantConv,
+    QuantBottleneck,
+    QuantC2f,
+    QuantSPPF,
     AIFI,
     C1,
     C2,
@@ -41,7 +45,6 @@ from ultralytics.nn.modules import (
     Classify,
     Concat,
     Conv,
-    QuantConv,
     Conv2,
     ConvTranspose,
     Detect,
@@ -1367,6 +1370,9 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             Classify,
             Conv,
             QuantConv,
+            QuantSPPF,
+            QuantBottleneck,
+            QuantC2f,
             ConvTranspose,
             GhostConv,
             Bottleneck,
@@ -1407,6 +1413,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C1,
             C2,
             C2f,
+            QuantC2f,
             C3k2,
             C2fAttn,
             C3,
